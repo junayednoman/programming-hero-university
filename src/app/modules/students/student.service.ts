@@ -5,66 +5,84 @@ import { userModel } from '../users/user.model';
 import { AppError } from '../../errors/appError';
 import httpStatus from 'http-status';
 import { TStudent } from './student.interface';
+import QueryBuilder from '../../builder/queryBuilder';
 
 const getAllStudentsFromDb = async (query: Record<string, unknown>) => {
   const searchFields = ['email', 'name.firstName', 'presentAddress'];
-  const filterQueryObj = { ...query };
-  let searchTerm = '';
-  if (query?.searchTerm) {
-    searchTerm = query.searchTerm as string;
-  }
-  // search query
-  const searchedResult = studentModel.find({
-    $or: searchFields.map((field) => ({
-      [field]: { $regex: searchTerm, $options: 'i' },
-    })),
-  });
 
-  // filter query
-  const excludeFields = ['searchTerm', 'sort', 'limit', 'pages', 'fields'];
-  excludeFields.forEach((field) => {
-    delete filterQueryObj[field];
-  });
+  // const filterQueryObj = { ...query };
+  // let searchTerm = '';
+  // if (query?.searchTerm) {
+  //   searchTerm = query.searchTerm as string;
+  // }
+  // // search query
+  // const searchedResult = studentModel.find({
+  //   $or: searchFields.map((field) => ({
+  //     [field]: { $regex: searchTerm, $options: 'i' },
+  //   })),
+  // });
 
-  const filteredResult = searchedResult
-    .find(filterQueryObj)
-    .populate('admissionSemester')
-    .populate({ path: 'admissionDepartment', populate: 'academicFaculty' });
+  // // filter query
+  // const excludeFields = ['searchTerm', 'sort', 'limit', 'pages', 'fields'];
+  // excludeFields.forEach((field) => {
+  //   delete filterQueryObj[field];
+  // });
 
-  // sort query
-  let sortQuery = 'createdAt';
-  if (query.sort) {
-    sortQuery = query.sort as string;
-  }
+  // const filteredResult = searchedResult
+  //   .find(filterQueryObj)
+  //   .populate('admissionSemester')
+  //   .populate({ path: 'admissionDepartment', populate: 'academicFaculty' });
 
-  const sortedResult = filteredResult.sort(sortQuery);
+  // // sort query
+  // let sortQuery = 'createdAt';
+  // if (query.sort) {
+  //   sortQuery = query.sort as string;
+  // }
 
-  // limit query
-  let limit = 10;
-  if (query.limit) {
-    limit = Number(query.limit);
-  }
+  // const sortedResult = filteredResult.sort(sortQuery);
 
-  const limitedResult = sortedResult.limit(limit);
+  // // limit query
+  // let limit = 10;
+  // if (query.limit) {
+  //   limit = Number(query.limit);
+  // }
 
-  // page query
-  let pages = 1;
-  let skip = 0;
-  if (query.pages) {
-    pages = Number(query.pages);
-    skip = Number(pages - 1) * limit;
-  }
+  // const limitedResult = sortedResult.limit(limit);
 
-  const skippedResult = limitedResult.skip(skip);
+  // // page query
+  // let pages = 1;
+  // let skip = 0;
+  // if (query.pages) {
+  //   pages = Number(query.pages);
+  //   skip = Number(pages - 1) * limit;
+  // }
 
-  // limit fields
-  let fields = '';
-  if (query.fields) {
-    fields = (query.fields as string).split(',').join(' ');
-  }
+  // const skippedResult = limitedResult.skip(skip);
 
-  const fieldsLimitedResult = await skippedResult.select(fields);
-  return fieldsLimitedResult;
+  // // limit fields
+  // let fields = '';
+  // if (query.fields) {
+  //   fields = (query.fields as string).split(',').join(' ');
+  // }
+
+  // const fieldsLimitedResult = await skippedResult.select(fields);
+  // return fieldsLimitedResult;
+
+  const studentQuery = new QueryBuilder(
+    studentModel
+      .find()
+      .populate('admissionSemester')
+      .populate({ path: 'admissionDepartment', populate: 'academicFaculty' }),
+    query,
+  )
+    .search(searchFields)
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+
+  const result = studentQuery.modelQuery;
+  return result;
 };
 
 // delete user with transaction

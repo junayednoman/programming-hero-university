@@ -5,10 +5,9 @@ import catchAsyncError from '../../utils/catchAsyncError';
 
 const createUser: RequestHandler = catchAsyncError(async (req, res) => {
   const { password, student: studentData } = req.body;
-  // const zodValidatedUser = userValidationSchema.parse(studentData);
   const result = await userServices.createStudentIntoDb(password, studentData);
   successResponse(res, {
-    message: 'Successfully created user',
+    message: 'Student created successfully',
     data: result,
   });
 });

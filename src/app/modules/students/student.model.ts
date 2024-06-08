@@ -5,6 +5,7 @@ import {
   TName,
   TStudent,
 } from './student.interface';
+import { AppError } from '../../errors/appError';
 
 const guardianSchema = new Schema<TGuardian>({
   fatherName: { type: String, required: [true, "Father's name is required."] },
@@ -47,7 +48,7 @@ const studentSchema = new Schema<TStudent>(
     user: {
       type: Schema.Types.ObjectId,
       unique: true,
-      ref: 'userModel',
+      ref: 'users',
     },
     gender: {
       type: String,
@@ -80,17 +81,32 @@ const studentSchema = new Schema<TStudent>(
     },
     admissionSemester: {
       type: Schema.Types.ObjectId,
-      ref: 'AcademicSemesterModel',
+      ref: 'academicSemester',
+    },
+    admissionDepartment: {
+      type: Schema.Types.ObjectId,
+      ref: 'academicDepartment',
     },
     profileImage: {
       type: String,
       required: true,
     },
+    isDeleted: { type: Boolean, default: false },
   },
   {
     timestamps: true,
   },
 );
+
+//  check if Student exist before updating
+studentSchema.pre('findOneAndUpdate', async function (next) {
+  const query = this.getQuery();
+  const isStudentExist = await studentModel.findOne(query);
+  if (!isStudentExist) {
+    throw new AppError(404, 'Student does not exist with this Id');
+  }
+  next();
+});
 
 const studentModel = model<TStudent>('students', studentSchema);
 export default studentModel;

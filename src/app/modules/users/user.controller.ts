@@ -3,7 +3,7 @@ import { userServices } from './user.service';
 import successResponse from '../../utils/successResponse';
 import catchAsyncError from '../../utils/catchAsyncError';
 
-const createUser: RequestHandler = catchAsyncError(async (req, res) => {
+const createStudent: RequestHandler = catchAsyncError(async (req, res) => {
   const { password, student: studentData } = req.body;
   const result = await userServices.createStudentIntoDb(password, studentData);
   successResponse(res, {
@@ -12,4 +12,13 @@ const createUser: RequestHandler = catchAsyncError(async (req, res) => {
   });
 });
 
-export const UserController = { createUser };
+const createFaculty: RequestHandler = catchAsyncError(async (req, res) => {
+  const { password, faculty: facultyData } = req.body;
+  const result = await userServices.createFacultyIntoDb(password, facultyData);
+  successResponse(res, {
+    message: 'Faculty created successfully',
+    data: result,
+  });
+});
+
+export const UserController = { createStudent, createFaculty };

@@ -1,13 +1,4 @@
 import { z } from 'zod';
-// Guardian Schema
-const guardianValidationSchema = z.object({
-  fatherName: z.string().nonempty({ message: "Father's name is required." }),
-  motherName: z.string().nonempty({ message: "Mother's name is required." }),
-  fatherOccupation: z.string().optional(),
-  motherOccupation: z.string().optional(),
-  fatherContact: z.string().optional(),
-  motherContact: z.string().optional(),
-});
 
 // Name Schema
 const nameValidationSchema = z.object({
@@ -16,20 +7,12 @@ const nameValidationSchema = z.object({
   lastName: z.string().nonempty({ message: 'Last name is required.' }),
 });
 
-// Local Guardian Schema
-const localGuardianValidationSchema = z.object({
-  name: z.string().nonempty({ message: 'Local guardian name is required.' }),
-  occupation: z.string().nonempty({ message: 'Occupation is required.' }),
-  contactNo: z.string().nonempty({ message: 'Contact number is required.' }),
-  address: z.string().nonempty({ message: 'Address is required.' }),
-});
-
-// Student Schema for creating
-const createStudentValidationSchema = z.object({
+// Faculty Schema for creating
+const createFacultyValidationSchema = z.object({
   body: z.object({
-    password: z.string().max(20),
-    student: z.object({
+    faculty: z.object({
       name: nameValidationSchema,
+      designation: z.string(),
       user: z.string().optional(),
       email: z
         .string()
@@ -56,10 +39,8 @@ const createStudentValidationSchema = z.object({
       permanentAddress: z
         .string()
         .nonempty({ message: 'Permanent address is required.' }),
-      guardian: guardianValidationSchema,
-      localGuardian: localGuardianValidationSchema,
-      admissionSemester: z.string(),
-      admissionDepartment: z.string(),
+      academicFaculty: z.string(),
+      academicDepartment: z.string(),
       profileImage: z
         .string()
         .nonempty({ message: 'Profile image is required.' }),
@@ -67,24 +48,6 @@ const createStudentValidationSchema = z.object({
     }),
   }),
 });
-
-// student schema for updating
-const guardianUpdateValidationSchema = z
-  .object({
-    fatherName: z
-      .string()
-      .nonempty({ message: "Father's name is required." })
-      .optional(),
-    motherName: z
-      .string()
-      .nonempty({ message: "Mother's name is required." })
-      .optional(),
-    fatherOccupation: z.string().optional(),
-    motherOccupation: z.string().optional(),
-    fatherContact: z.string().optional(),
-    motherContact: z.string().optional(),
-  })
-  .partial();
 
 // Name Schema
 const nameUpdateValidationSchema = z
@@ -101,35 +64,15 @@ const nameUpdateValidationSchema = z
   })
   .partial();
 
-// Local Guardian Schema
-const localGuardianUpdateValidationSchema = z
-  .object({
-    name: z
-      .string()
-      .nonempty({ message: 'Local guardian name is required.' })
-      .optional(),
-    occupation: z
-      .string()
-      .nonempty({ message: 'Occupation is required.' })
-      .optional(),
-    contactNo: z
-      .string()
-      .nonempty({ message: 'Contact number is required.' })
-      .optional(),
-    address: z
-      .string()
-      .nonempty({ message: 'Address is required.' })
-      .optional(),
-  })
-  .partial();
-
-// Student Schema
-const studentUpdateValidationSchema = z.object({
+// Faculty Schema
+const facultyUpdateValidationSchema = z.object({
   body: z
     .object({
-      student: z
+      password: z.string().max(20).optional(),
+      faculty: z
         .object({
           name: nameUpdateValidationSchema.optional(),
+          designation: z.string().optional(),
           user: z.string().optional(),
           email: z
             .string()
@@ -162,10 +105,8 @@ const studentUpdateValidationSchema = z.object({
             .string()
             .nonempty({ message: 'Permanent address is required.' })
             .optional(),
-          guardian: guardianUpdateValidationSchema.optional(),
-          localGuardian: localGuardianUpdateValidationSchema.optional(),
-          admissionSemester: z.string().optional(),
-          admissionDepartment: z.string().optional(),
+          academicSemester: z.string().optional(),
+          academicDepartment: z.string().optional(),
           profileImage: z
             .string()
             .nonempty({ message: 'Profile image is required.' })
@@ -177,7 +118,7 @@ const studentUpdateValidationSchema = z.object({
     .partial(),
 });
 
-export const studentValidations = {
-  createStudentValidationSchema,
-  studentUpdateValidationSchema,
+export const facultyValidations = {
+  createFacultyValidationSchema,
+  facultyUpdateValidationSchema,
 };

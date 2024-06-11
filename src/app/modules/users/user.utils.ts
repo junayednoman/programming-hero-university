@@ -1,4 +1,5 @@
 import { IAcademicSemester } from '../academicSemester/academicSemester.interface';
+import facultyModel from '../faculty/faculty.model';
 import { userModel } from './user.model';
 
 const getLastStudentId = async () => {
@@ -30,4 +31,25 @@ export const generateStudentId = async (payload: IAcademicSemester) => {
   let incrementedId = (parseInt(currentId) + 1).toString().padStart(4, '0');
   incrementedId = `${payload.year}${payload.code}${incrementedId}`;
   return incrementedId;
+};
+
+export const generateFacultyId = async () => {
+  let lastFacultyIdDigit = (0).toString();
+  const lastFaculty = await facultyModel
+    .find()
+    .sort({ createdAt: -1 })
+    .limit(1)
+    .select('id -_id');
+
+  // [ { id: 'F-0003' } ]
+  if (lastFaculty.length > 0) {
+    const lastFacultyId = lastFaculty[0].id;
+    lastFacultyIdDigit = lastFacultyId.substring(2);
+  }
+
+  const fourDigitId = (parseInt(lastFacultyIdDigit) + 1)
+    .toString()
+    .padStart(4, '0');
+  const id = `F-${fourDigitId}`;
+  return id;
 };

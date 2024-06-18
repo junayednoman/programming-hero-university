@@ -1,4 +1,5 @@
 import { IAcademicSemester } from '../academicSemester/academicSemester.interface';
+import adminModel from '../admin/admin.model';
 import facultyModel from '../faculty/faculty.model';
 import { userModel } from './user.model';
 
@@ -51,5 +52,25 @@ export const generateFacultyId = async () => {
     .toString()
     .padStart(4, '0');
   const id = `F-${fourDigitId}`;
+  return id;
+};
+export const generateAdminId = async () => {
+  let lastAdminIdDigit = (0).toString();
+  const lastAdmin = await adminModel
+    .find()
+    .sort({ createdAt: -1 })
+    .limit(1)
+    .select('id -_id');
+
+  // [ { id: 'F-0003' } ]
+  if (lastAdmin.length > 0) {
+    const lastAdminId = lastAdmin[0].id;
+    lastAdminIdDigit = lastAdminId.substring(2);
+  }
+
+  const fourDigitId = (parseInt(lastAdminIdDigit) + 1)
+    .toString()
+    .padStart(4, '0');
+  const id = `A-${fourDigitId}`;
   return id;
 };

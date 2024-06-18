@@ -5,10 +5,12 @@ import cors from 'cors';
 import globalErrorHandler from './app/middleware/globalErrorHandler';
 import routeNotFound from './app/middleware/notFound';
 import router from './app/routes';
+import cookieParser from 'cookie-parser';
 
 const app: Application = express();
 app.use(express.json());
-app.use(cors());
+app.use(cors({ origin: ['/http://localhost:5173'] }));
+app.use(cookieParser());
 
 // const test = async (req: Request, res: Response) => {
 //   Promise.reject();

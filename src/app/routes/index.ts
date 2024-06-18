@@ -5,6 +5,11 @@ import { AcademicSemesterRoutes } from '../modules/academicSemester/academicSeme
 import { academicFacultyRoutes } from '../modules/academicFaculty/academicFaculty.routes';
 import { academicDepartmentRoutes } from '../modules/academicDepartment/academicDepertment.routes';
 import { facultyRoutes } from '../modules/faculty/faculty.routes';
+import { courseRoutes } from '../modules/course/course.routes';
+import { semesterRegistrationRoutes } from '../modules/semesterRegistration/semesterRegistration.routes';
+import { offeredCourseRoutes } from '../modules/offeredCourse/offeredCourse.routes';
+import { authRoutes } from '../modules/auth/auth.routes';
+import { adminRoutes } from '../modules/admin/admin.routes';
 
 const router = Router();
 
@@ -15,6 +20,11 @@ const apiRoutes = [
   { path: '/academic-faculties/', route: academicFacultyRoutes },
   { path: '/academic-departments/', route: academicDepartmentRoutes },
   { path: '/faculties/', route: facultyRoutes },
+  { path: '/admins/', route: adminRoutes },
+  { path: '/courses/', route: courseRoutes },
+  { path: '/semester-registrations/', route: semesterRegistrationRoutes },
+  { path: '/offered-courses/', route: offeredCourseRoutes },
+  { path: '/auth/', route: authRoutes },
 ];
 
 apiRoutes.forEach((route) => router.use(route.path, route.route));

@@ -6,6 +6,7 @@ import { AppError } from '../../errors/appError';
 import httpStatus from 'http-status';
 
 const getAllFaculties: RequestHandler = catchAsyncError(async (req, res) => {
+  console.log(req.cookies);
   const result = await facultyServices.getAllFacultiesFromDb(req.query);
   if (result.length === 0) {
     throw new AppError(httpStatus.NOT_FOUND, 'No faculty found!');
